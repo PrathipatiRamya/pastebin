@@ -1,3 +1,6 @@
+import { kv } from "@vercel/kv";
+
 export async function GET() {
-  return Response.json({ ok: true }, { status: 200 });
+  await kv.set("healthz", "ok");
+  return Response.json({ ok: true });
 }

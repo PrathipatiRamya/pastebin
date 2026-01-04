@@ -34,7 +34,7 @@ export async function POST(req) {
   const id = crypto.randomUUID();
   const now = Date.now();
 
-  savePaste(id, {
+  await savePaste(id, {
     id,
     content,
     created_at: now,
