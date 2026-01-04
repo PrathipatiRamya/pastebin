@@ -99,5 +99,5 @@ UI page views (/p/:id) do not affect the view count.
 
 
 ### For Local Development and Running:
-npm install
-npm run dev
+-- npm install
+-- npm run dev
