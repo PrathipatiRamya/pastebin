@@ -1,41 +1,34 @@
-import { createClient } from "@vercel/kv";
+import Redis from "ioredis";
 
-const isVercel =
-  process.env.STORAGE_REST_API_URL && process.env.STORAGE_REST_API_TOKEN;
+let redis = null;
 
-// In-memory fallback (local only)
-const memoryStore = new Map();
-
-let kv = null;
-
-if (isVercel) {
-  kv = createClient({
-    url: process.env.STORAGE_REST_API_URL,
-    token: process.env.STORAGE_REST_API_TOKEN,
-  });
+if (process.env.STORAGE_REDIS_URL) {
+  redis = new Redis(process.env.STORAGE_REDIS_URL);
 }
 
+// Local fallback (dev only)
+const memoryStore = new Map();
 const key = (id) => `paste:${id}`;
 
 export async function savePaste(id, data) {
-  if (kv) {
-    await kv.set(key(id), data);
+  if (redis) {
+    await redis.set(key(id), JSON.stringify(data));
   } else {
     memoryStore.set(key(id), data);
   }
 }
 
 export async function getPaste(id) {
-  if (kv) {
-    return await kv.get(key(id));
-  } else {
-    return memoryStore.get(key(id));
+  if (redis) {
+    const value = await redis.get(key(id));
+    return value ? JSON.parse(value) : null;
   }
+  return memoryStore.get(key(id));
 }
 
 export async function deletePaste(id) {
-  if (kv) {
-    await kv.del(key(id));
+  if (redis) {
+    await redis.del(key(id));
   } else {
     memoryStore.delete(key(id));
   }

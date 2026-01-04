@@ -9,7 +9,7 @@ export default async function PastePage({ params }) {
     return notFoundUI();
   }
 
-  // TTL check ONLY (no delete!)
+  // TTL check ONLY
   if (paste.ttl_seconds !== null) {
     const expiresAt = paste.created_at + paste.ttl_seconds * 1000;
 
@@ -19,13 +19,14 @@ export default async function PastePage({ params }) {
   }
 
   return (
-    <div style={{ padding: "40px" }}>
+    <div style={{ maxWidth: "900px", margin: "40px auto" }}>
       <h2>Paste</h2>
       <pre
         style={{
           whiteSpace: "pre-wrap",
           wordBreak: "break-word",
-          background: "#f5f5f5",
+          background: "#111",
+          color: "#f5f5f5",
           padding: "16px",
           borderRadius: "6px",
         }}
